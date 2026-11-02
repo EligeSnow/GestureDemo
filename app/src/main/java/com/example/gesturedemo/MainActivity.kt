@@ -42,24 +42,29 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier) {
+    // В этой лабораторной показываю работу мультитач-преобразований на одном квадрате.
     MultiTouchDemo(modifier)
 }
 
 @Composable
 fun MultiTouchDemo(modifier: Modifier = Modifier) {
+    // remember сохраняет параметры преобразования при рекомпозиции.
     var scale by remember { mutableStateOf(1f) }
     var angle by remember { mutableStateOf(0f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
+    // transformable сообщает, насколько изменились масштаб, угол и положение при жесте.
     val state = rememberTransformableState { scaleChange, offsetChange, rotationChange ->
         scale *= scaleChange
         angle += rotationChange
         offset += offsetChange
     }
 
+    // Размещаю квадрат по центру до применения смещения, заданного жестом.
     Box(contentAlignment = Alignment.Center, modifier = modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
+                // Графический слой отображает накопленные масштаб, поворот и перемещение.
                 .graphicsLayer(
                     scaleX = scale,
                     scaleY = scale,
@@ -67,6 +72,7 @@ fun MultiTouchDemo(modifier: Modifier = Modifier) {
                     translationX = offset.x,
                     translationY = offset.y
                 )
+                // Этот модификатор распознает мультитач и обновляет state выше.
                 .transformable(state = state)
                 .background(Color.Blue)
                 .size(100.dp)
